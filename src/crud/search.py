@@ -31,7 +31,7 @@ class ApplicationSearchCRUD:
         rows = result.mappings().unique().all()
         return {
             "limit": limit,
-            "offset": skip * limit,
+            "offset": skip,
             "total": rows[0]["total"] if rows else 0,
             "objects": [r["Application"] for r in rows],
         }
