@@ -1,7 +1,7 @@
 import uuid
 from typing import TYPE_CHECKING, List
 
-from sqlalchemy import UUID, Boolean, Integer
+from sqlalchemy import UUID, Boolean, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from databases.database import Base
@@ -29,8 +29,8 @@ class User(Base):
     uid: Mapped[uuid.UUID] = mapped_column(
         UUID, unique=True, index=True, default=uuid.uuid4
     )
-    username: Mapped[str]
-    email: Mapped[str]
+    username: Mapped[str] = mapped_column(String, unique=True)
+    email: Mapped[str] = mapped_column(String, unique=True)
     password: Mapped[str]
     is_verify: Mapped[bool] = mapped_column(Boolean, default=False)
     applications: Mapped[List["Application"]] = relationship(
