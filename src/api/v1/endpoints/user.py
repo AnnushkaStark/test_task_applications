@@ -3,7 +3,7 @@ from fastapi_jwt import JwtAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.dependencies.auth import get_current_user, refresh_security
+from api.dependencies.auth import get_current_user
 from api.dependencies.database import get_async_db
 from crud.user import user_crud
 from models import User
@@ -15,6 +15,7 @@ from utilities.security.security import (
     REFRESH_TOKEN_COOKIE_KEY,
     access_security,
     create_tokens,
+    refresh_security,
 )
 
 router = APIRouter()
