@@ -12,5 +12,5 @@ class TokenVerify(BaseModel):
 
 
 class TokenPayload(BaseModel):
-    username: str
+    email: str
     password: str
