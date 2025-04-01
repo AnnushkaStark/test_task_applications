@@ -8,6 +8,7 @@ from databases.database import Base
 
 if TYPE_CHECKING:
     from .application import Application
+    from .verify import VerificationCode
 
 
 class User(Base):
@@ -21,6 +22,7 @@ class User(Base):
         - email: str - электронная почта
         - passowrd: str - хэш пароля
         - is_verify: bool - пользователь верифицирован или нет
+        - verify_code: VerificationCode - связь код подтвержения аккаунта
         - applications: List[application] - заявки пользователя
     """
 
@@ -33,6 +35,9 @@ class User(Base):
     email: Mapped[str] = mapped_column(String, unique=True)
     password: Mapped[str]
     is_verify: Mapped[bool] = mapped_column(Boolean, default=False)
+    verify_code: Mapped["VerificationCode"] = relationship(
+        "VerificationCode", back_populates="user"
+    )
     applications: Mapped[List["Application"]] = relationship(
         "Application", back_populates="author"
     )
