@@ -46,7 +46,7 @@ async def get_current_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    return await user_crud.get_by_username(db=db, username=token_user.username)
+    return await user_crud.get_by_email(db=db, email=token_user.email)
 
 
 async def verify_user(user: User = Depends(get_current_user)) -> User:

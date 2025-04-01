@@ -1,7 +1,8 @@
 from typing import Optional
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from sqlalchemy.orm import joinedload
 
 from models import User
 from schemas.user import UserBase, UserCreate
@@ -23,6 +24,15 @@ class UserCRUD(BaseAsyncCRUD[User, UserBase, UserCreate]):
         statement = select(self.model).where(self.model.username == email)
         result = await db.execute(statement)
         return result.scalars().first()
+
+    async def get_by_id(self, db: AsyncSession, obj_id: int) -> Optional[User]:
+        statement = (
+            select(self.model)
+            .options(joinedload(self.model.verify_code))
+            .where(self.model.id == obj_id)
+        )
+        result = await db.execute(statement)
+        return result.scalars().unique().first()
 
     async def mark_verify(self, db: AsyncSession, db_obj: User) -> User:
         db_obj.is_verify = True
