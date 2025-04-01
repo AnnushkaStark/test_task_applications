@@ -47,3 +47,9 @@ async def get_current_user(
             detail="Could not validate credentials",
         )
     return await user_crud.get_by_username(db=db, username=token_user.username)
+
+
+async def verify_user(user: User = Depends(get_current_user)) -> User:
+    if not user.is_verify:
+        raise Exception("Please verify your account")
+    return user
