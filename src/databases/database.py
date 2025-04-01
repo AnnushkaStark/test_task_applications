@@ -11,7 +11,6 @@ from sqlalchemy.sql.sqltypes import ARRAY, String
 
 from config.configs import db_settings
 
-
 SQLALCHEMY_DATABASE_URL = (
     "postgresql+asyncpg://"
     f"{db_settings.POSTGRES_USER}:"
