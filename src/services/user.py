@@ -22,9 +22,7 @@ async def create(db: AsyncSession, create_data: UserCreate) -> Optional[User]:
     if await user_crud.get_by_email(db=db, email=create_data.email):
         raise Exception("Email alredy exist")
     create_data.password = get_password_hash(create_data.password)
-    user = await user_crud.create(
-        db=db, create_schema=create_data.model_dump()
-    )
+    user = await user_crud.create(db=db, create_schema=create_data)
     verify_code = await generate_veriify_code()
     verification_code_schema = VerificationCodeCreate(
         verification_code=verify_code
