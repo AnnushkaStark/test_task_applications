@@ -31,7 +31,7 @@ class AppllicationCreate(ApplicationBase):
 
 class ApplicationCreateDB(AppllicationCreate):
     author_id: int
-    status = ApplicationStatus = Field(default=ApplicationStatus.OPEN)
+    status: ApplicationStatus = Field(default=ApplicationStatus.OPEN)
 
 
 class ApplicationUpdate(BaseModel):
