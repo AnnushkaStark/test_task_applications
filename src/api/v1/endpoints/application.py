@@ -4,12 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_filter import FilterDepends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.dependencies.application import user_application
 from api.dependencies.auth import verify_user
 from api.dependencies.database import get_async_db
 from api.filters.application import ApplicationsFilter
 from crud.application import application_crud
 from crud.search import search_application_crud
-from models import User
+from models import Application, User
 from schemas.application import (
     ApplicationPaginatedResponse,
     ApplicationResponse,
@@ -52,20 +53,9 @@ async def read_application(
     application_uid: UUID,
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(verify_user),
+    application: Application = Depends(user_application),
 ):
-    found_application = await application_crud.get_by_uid(
-        db=db, uid=application_uid
-    )
-    if not found_application:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
-        )
-    if found_application.author_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission!",
-        )
-    return found_application
+    return application
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
@@ -85,22 +75,11 @@ async def update_application(
     update_data: ApplicationUpdate,
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(verify_user),
+    application: Application = Depends(user_application),
 ):
-    found_application = await application_crud.get_by_uid(
-        db=db, uid=application_uid
-    )
-    if not found_application:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
-        )
-    if found_application.author_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission!",
-        )
     try:
         return await application_service.update(
-            db=db, db_obj=found_application, update_data=update_data
+            db=db, db_obj=application, update_data=update_data
         )
     except Exception as e:
         raise HTTPException(
@@ -113,17 +92,6 @@ async def remove_application(
     application_uid: UUID,
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(verify_user),
+    application: Application = Depends(user_application),
 ):
-    found_application = await application_crud.get_by_uid(
-        db=db, uid=application_uid
-    )
-    if not found_application:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
-        )
-    if found_application.author_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission!",
-        )
-    return await application_crud.remove(db=db, obj_id=found_application.id)
+    return await application_crud.remove(db=db, obj_id=application.id)
