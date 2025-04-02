@@ -32,7 +32,7 @@ services:
     networks:
       - app-network
 
-  volumes:
+volumes:
   pgdata:
 
 networks:
