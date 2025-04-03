@@ -11,7 +11,7 @@ async def valid_name(schema: ApplicationUpdate) -> None:
     if schema.name:
         if (
             MIN_APPLICATION_NAME_LENGTH
-            > schema.name
+            > len(schema.name)
             > MAX_APPLICATION_NAME_LENGTH
         ):
             raise Exception(
@@ -23,7 +23,7 @@ async def valid_description(schema: ApplicationUpdate) -> None:
     if schema.description:
         if (
             MIN_APPLICATION_TEXT_LENGTH
-            > schema.description
+            > len(schema.description)
             > MAX_APPLICATION_TEXT_LENGTH
         ):
             raise Exception(
