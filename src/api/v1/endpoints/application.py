@@ -25,7 +25,7 @@ router = APIRouter()
 @router.get("/search/", response_model=ApplicationPaginatedResponse)
 async def search_application(
     skip: int = 0,
-    limit: int = 0,
+    limit: int = 20,
     query: str = Query(min_length=2),
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(verify_user),
@@ -38,7 +38,7 @@ async def search_application(
 @router.get("/", response_model=ApplicationPaginatedResponse)
 async def read_applications(
     skip: int = 0,
-    limit: int = 0,
+    limit: int = 20,
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(verify_user),
     filter: ApplicationsFilter = FilterDepends(ApplicationsFilter),
