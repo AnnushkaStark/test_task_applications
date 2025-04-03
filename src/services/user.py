@@ -41,7 +41,7 @@ async def login(user: User, login_schema: UserLogin) -> dict:
     ):
         raise Exception("User password is wrong!")
     subject = TokenSubject(
-        username=str(user.username),
+        email=str(user.email),
         password=user.password,
     )
     return await create_tokens(subject)
@@ -51,6 +51,13 @@ async def verify_account(
     db: AsyncSession, user_id: int, verification_code: str
 ) -> None:
     user = await user_crud.get_by_id(db=db, obj_id=user_id)
-    if user.verify_code == verification_code:
-        await user_crud.mark_verify(db=db, db_obj=user)
-    raise Exception("Invalid verify code")
+    if user.verify_code != verification_code:
+        raise Exception("Invalid verify code")
+    await user_crud.mark_verify(db=db, db_obj=user)
+
+
+async def resend_verify_code(db: AsyncSession, user: User) -> None:
+    verify_code = await generate_veriify_code()
+    user.verify_code = verify_code
+    await db.commit()
+    await email_client.send_mail(recepients=[user.email], body=verify_code)
