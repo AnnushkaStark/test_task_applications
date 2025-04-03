@@ -3,6 +3,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from crud.user import user_crud
+from crud.verify import verification_code_crud
 from models import User
 from schemas.user import UserCreate, UserLogin
 from schemas.verify import VerificationCodeCreate
@@ -48,16 +49,11 @@ async def login(user: User, login_schema: UserLogin) -> dict:
 
 
 async def verify_account(
-    db: AsyncSession, user_id: int, verification_code: str
+    db: AsyncSession, user: User, verification_code: str
 ) -> None:
-    user = await user_crud.get_by_id(db=db, obj_id=user_id)
-    if user.verify_code != verification_code:
+    found_code = await verification_code_crud.get_by_user_id(
+        db=db, user_id=user.id
+    )
+    if found_code.verification_code != verification_code:
         raise Exception("Invalid verify code")
     await user_crud.mark_verify(db=db, db_obj=user)
-
-
-async def resend_verify_code(db: AsyncSession, user: User) -> None:
-    verify_code = await generate_veriify_code()
-    user.verify_code = verify_code
-    await db.commit()
-    await email_client.send_mail(recepients=[user.email], body=verify_code)

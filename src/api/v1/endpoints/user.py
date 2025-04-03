@@ -67,7 +67,7 @@ async def verify_account(
 ):
     try:
         return await user_service.verify_account(
-            db=db, user_id=current_user.id, verification_code=verify_code
+            db=db, user=current_user, verification_code=verify_code
         )
     except Exception as e:
         raise HTTPException(
