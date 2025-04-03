@@ -22,7 +22,7 @@ class ApplicationsFilter(Filter):
         self, db: AsyncSession, user_id: int, skip: int = 0, limit: int = 20
     ) -> Sequence[Application]:
         statement = (
-            select(Application, func.count.over().label("total"))
+            select(Application, func.count().over().label("total"))
             .where(Application.author_id == user_id)
             .offset(skip)
             .limit(limit)
