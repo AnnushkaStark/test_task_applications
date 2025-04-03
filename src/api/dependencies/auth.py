@@ -51,5 +51,8 @@ async def get_current_user(
 
 async def verify_user(user: User = Depends(get_current_user)) -> User:
     if not user.is_verify:
-        raise Exception("Please verify your account")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Please verify  your account",
+        )
     return user
