@@ -34,10 +34,13 @@ class UserCRUD(BaseAsyncCRUD[User, UserBase, UserCreate]):
         result = await db.execute(statement)
         return result.scalars().unique().first()
 
-    async def mark_verify(self, db: AsyncSession, db_obj: User) -> User:
-        db_obj.is_verify = True
-        await db.commit()
-        return db_obj
+    async def mark_verify(self, db: AsyncSession, db_obj_id: int) -> User:
+        user = await self.get_by_id(db=db, obj_id=db_obj_id)
+        if user:
+            user.is_verify = True
+            await db.commit()
+            await db.refresh(user)
+            return user
 
 
 user_crud = UserCRUD(User)

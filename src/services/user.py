@@ -50,10 +50,11 @@ async def login(user: User, login_schema: UserLogin) -> dict:
 
 async def verify_account(
     db: AsyncSession, user: User, verification_code: str
-) -> None:
+) -> User:
     found_code = await verification_code_crud.get_by_user_id(
         db=db, user_id=user.id
     )
     if found_code.verification_code != verification_code:
         raise Exception("Invalid verify code")
-    await user_crud.mark_verify(db=db, db_obj=user)
+    verify_user = await user_crud.mark_verify(db=db, db_obj_id=user.id)
+    return verify_user
