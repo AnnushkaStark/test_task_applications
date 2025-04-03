@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import Application
@@ -21,7 +21,7 @@ class ApplicationSearchCRUD:
             select(Application, func.count().over().label("total"))
             .where(
                 Application.author_id == user_id,
-                *[Application.name.ilike(f"%{q}%") for q in lst_query],
+                or_(*[Application.name.ilike(f"%{q}%") for q in lst_query]),
             )
             .offset(skip)
             .limit(limit)
